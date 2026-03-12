@@ -8,7 +8,7 @@ let userRoute = express.Router()
 
 
 
-userRoute.post("/signup", async (req, res) => {
+userRoute.post("/signup", async (req, res, next) => {
   try {
 
     const { name, email, password } = req.body;
@@ -28,7 +28,7 @@ userRoute.post("/signup", async (req, res) => {
 
     if (!nameRegex.test(name)) {
       return res.status(400).json({
-        status: false,
+        status: false, 
         message: "Name should contain only letters"
       });
     }
@@ -49,7 +49,6 @@ userRoute.post("/signup", async (req, res) => {
     }
 
     let user = await UserModel.findOne({ email: email })
-    
     if (user) {
       return res.status(400).json({ status: false, message: "user already exists" })
     }
@@ -70,15 +69,14 @@ userRoute.post("/signup", async (req, res) => {
     await newUser.save()
     res.status(200).json({ status: true, message: "registration successful" })
   } catch (error) {
-    console.log(error)
-    res.status(500).json({ status: false, message: "registration failed" })
+    next(error);
   }
 });
 
 
 
 
-userRoute.get("/activation/:token", async (req, res) => {
+userRoute.get("/activation/:token", async (req, res, next) => {
   try {
     let token = req.params.token
     if (!token) {
@@ -90,8 +88,7 @@ userRoute.get("/activation/:token", async (req, res) => {
 
     res.redirect("http://localhost:5173/login")
   } catch (error) {
-    console.log(error)
-    res.status(400).json({ status: false, message: "invalid token" })
+    next(error);
   }
 })
 
@@ -99,7 +96,7 @@ userRoute.get("/activation/:token", async (req, res) => {
 
 
 
-userRoute.post("/login", async (req, res) => {
+userRoute.post("/login", async (req, res, next) => {
   try {
     const { email, password } = req.body;
    
@@ -141,8 +138,7 @@ userRoute.post("/login", async (req, res) => {
       }
     })
   } catch (error) {
-    console.log(error)
-    res.status(500).json({ status: false, message: "server error" })
+    next(error);
   }
 });
 

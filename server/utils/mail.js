@@ -22,10 +22,6 @@ const transporter = nodemailer.createTransport({
     text:options.message,
   })
 
-
-
-
-
 }
 
 module.exports={sendMail}
